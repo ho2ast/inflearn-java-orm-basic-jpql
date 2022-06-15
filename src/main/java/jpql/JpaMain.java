@@ -11,12 +11,24 @@ public class JpaMain {
         tx.begin();
 
         try {
-            for (int i = 0; i < 100; i++) {
-                Member member = new Member();
-                member.setUsername("member" + i);
-                member.setAge(i);
-                em.persist(member);
-            }
+//            for (int i = 0; i < 100; i++) {
+//                Member member = new Member();
+//                member.setUsername("member" + i);
+//                member.setAge(i);
+//                em.persist(member);
+//            }
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+//            member.setUsername("member1");
+            member.setAge(10);
+            member.setType(MemberType.ADMIN);
+
+            member.setTeam(team);
+
+            em.persist(member);
 
 //            // TypeQeury - 리턴 타입이 명확 할 때
 //            TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
@@ -59,14 +71,49 @@ public class JpaMain {
 
             // 페이징
             // JPA에서 알아서 DB에 맞게 구체화 해서 쿼리 전송함
-            List<Member> result7 = em.createQuery("select m from Member m order by m.age desc", Member.class)
-                    .setFirstResult(0)
-                    .setMaxResults(10)
-                    .getResultList();
-            for (Member member1 : result7) {
-                System.out.println("member = " + member1);
-            }
+//            List<Member> result7 = em.createQuery("select m from Member m order by m.age desc", Member.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(10)
+//                    .getResultList();
+//            for (Member member1 : result7) {
+//                System.out.println("member = " + member1);
+//            }
 
+            // Join
+            // inner join
+//            List<Member> result8 = em.createQuery("select m from Member m inner join m.team", Member.class)
+//                    .getResultList();
+            // left join
+//            List<Member> result9 = em.createQuery("select m from Member m left join m.team", Member.class)
+//                    .getResultList();
+            // 세타조인 - 막조인이라고 부른다ㅋㅋㅋ
+//            List<Member> result10 = em.createQuery("select m from Member m, Team t where m.username = t.name", Member.class)
+//                    .getResultList();
+            // on 절 (join절은 조건문)
+//            List<Member> result11 = em.createQuery("select m from Member m left join Team t on t.name = 'teamA'", Member.class)
+//                    .getResultList();
+
+
+            // 서브쿼리
+
+            // 기본타입
+//            Query result11 = em.createQuery("select 'Hello', true from Member m where m.type = jpql.MemberType.MEMBER");
+//            for (Object result : result11.getResultList()) {
+//                System.out.println("member1 = " + result);
+//            }
+
+            // 조건식
+//            Query query = em.createQuery("select case when m.age <= 10 then '학생요금' when m.age >= 60 then '경로요금' else '일반요금' end from Member m");
+//            List<Object> resultList = query.getResultList();
+//            for (Object member1 : resultList) {
+//                System.out.println("member1 = " + member1);
+//            }
+
+            List<String> query1 = em.createQuery("select coalesce(m.username, '이름없는 회원') from Member m").getResultList();
+            List<String> query2 = em.createQuery("select nullif(m.username, '이름없는 회원') from Member m").getResultList();
+            for (String member1 : query1) {
+                System.out.println("member1 = " + member1);
+            }
 
             // ==== 프로젝션 ====
 
